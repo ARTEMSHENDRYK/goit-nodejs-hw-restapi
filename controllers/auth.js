@@ -50,7 +50,7 @@ const register = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
   const { verificationToken } = req.params;
-  const user = await User.findOne({ verificationToken });
+  const user = await User.findOne({ verificationToken }).exec();
 
   if (!user) {
     throw HttpError(404, "User not found");
@@ -59,7 +59,7 @@ const verifyEmail = async (req, res) => {
   await User.findByIdAndUpdate(user._id, {
     verify: true,
     verificationToken: null,
-  });
+  }).exec();
 
   res.json({
     message: "Verification successful",
@@ -68,7 +68,7 @@ const verifyEmail = async (req, res) => {
 
 const resendVerifyEmail = async (req, res) => {
   const { email } = req.body;
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).exec();
   
   if (!user) {
     throw HttpError(400, "missing required field email");
